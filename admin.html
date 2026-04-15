@@ -13,6 +13,7 @@
         body { font-family: 'Hind Siliguri', sans-serif; background: #020617; color: white; }
         .tab { display: none; } .tab.active { display: block; }
         .input-box { background: #0f172a; border: 1px solid #1e293b; padding: 12px; border-radius: 12px; width: 100%; color: white; margin-bottom: 10px; outline: none; }
+        .input-box:focus { border-color: #f97316; }
         .btn-side { width: 100%; text-align: left; padding: 12px; border-radius: 12px; margin-bottom: 5px; transition: 0.3s; font-size: 13px; }
         .btn-side:hover, .btn-side.active { background: #f97316; color: white; }
     </style>
@@ -57,23 +58,28 @@
             <!-- Inventory Tab -->
             <div id="tab-inventory" class="tab">
                 <h3 class="text-xl font-bold mb-6 italic">প্রোডাক্ট ও স্টক ম্যানেজমেন্ট</h3>
-                <div class="bg-[#0f172a] p-6 rounded-2xl mb-8 border border-white/5">
+                <div class="bg-[#0f172a] p-6 rounded-2xl mb-8 border border-white/5 shadow-xl">
                     <input type="hidden" id="pid">
-                    <div class="grid grid-cols-2 gap-3">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                         <input type="text" id="pTitle" placeholder="প্রোডাক্ট নাম" class="input-box">
                         <input type="text" id="pImg" placeholder="ছবির ডাইরেক্ট লিঙ্ক" class="input-box">
                     </div>
-                    <div class="grid grid-cols-4 gap-3">
+                    <!-- ডেসক্রিপশন বক্স যোগ করা হয়েছে -->
+                    <textarea id="pDesc" placeholder="প্রোডাক্ট শর্ট ডেসক্রিপশন (বর্ণনা)" class="input-box h-20"></textarea>
+                    
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
                         <input type="number" id="pCost" placeholder="কেনা দাম" class="input-box">
                         <input type="number" id="pPdf" placeholder="PDF মূল্য" class="input-box">
                         <input type="number" id="pPrint" placeholder="Hard Copy মূল্য" class="input-box">
                         <input type="number" id="pStock" placeholder="স্টক সংখ্যা" class="input-box">
                     </div>
-                    <button onclick="saveProduct()" class="w-full bg-orange-600 py-3 rounded-xl font-bold uppercase">সেভ / আপডেট করুন</button>
+                    <button onclick="saveProduct()" id="saveBtn" class="w-full bg-orange-600 hover:bg-orange-700 py-3 rounded-xl font-bold uppercase transition">সেভ / আপডেট করুন</button>
+                    <button onclick="resetPForm()" id="cancelBtn" class="hidden w-full mt-2 bg-gray-700 py-2 rounded-xl font-bold uppercase text-xs">বাতিল করুন</button>
                 </div>
                 <div id="inventory-list" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
             </div>
 
+            <!-- (Other tabs: reports, customers, settings remain unchanged) -->
             <!-- Reports Tab -->
             <div id="tab-reports" class="tab">
                 <h3 class="text-xl font-bold mb-6 italic">ইনকাম স্টেটমেন্ট</h3>
@@ -188,8 +194,14 @@
                     list.innerHTML += `
                     <div class="bg-[#0f172a] p-4 rounded-xl flex items-center gap-4 border border-white/5">
                         <img src="${p.img}" class="w-12 h-12 rounded-lg object-cover bg-zinc-800">
-                        <div class="flex-1"><p class="text-xs font-bold">${p.title}</p><p class="text-[9px] opacity-50">স্টক: ${p.stock || 0} | লাভ: ৳${p.pdfPrice - p.cost}</p></div>
-                        <button onclick="editProduct('${c.key}')" class="text-blue-400 p-2"><i class="fas fa-edit"></i></button>
+                        <div class="flex-1">
+                            <p class="text-xs font-bold text-orange-400">${p.title}</p>
+                            <p class="text-[9px] opacity-50">স্টক: ${p.stock || 0} | লাভ: ৳${p.pdfPrice - p.cost}</p>
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="editProduct('${c.key}')" class="text-blue-400 p-2"><i class="fas fa-edit"></i></button>
+                            <button onclick="if(confirm('মুছে ফেলবেন?')) db.ref('products/${c.key}').remove()" class="text-red-400 p-2"><i class="fas fa-trash"></i></button>
+                        </div>
                     </div>`;
                 });
             });
@@ -204,42 +216,67 @@
             });
         }
 
+        // প্রোডাক্ট সেভ এবং আপডেট ফাংশন
         function saveProduct() {
             const id = document.getElementById('pid').value;
             const data = {
                 title: document.getElementById('pTitle').value,
                 img: document.getElementById('pImg').value,
-                cost: document.getElementById('pCost').value,
-                pdfPrice: document.getElementById('pPdf').value,
-                printPrice: document.getElementById('pPrint').value,
-                stock: document.getElementById('pStock').value
+                desc: document.getElementById('pDesc').value, // ডেসক্রিপশন যোগ করা হয়েছে
+                cost: parseFloat(document.getElementById('pCost').value) || 0,
+                pdfPrice: parseFloat(document.getElementById('pPdf').value) || 0,
+                printPrice: parseFloat(document.getElementById('pPrint').value) || 0,
+                stock: parseInt(document.getElementById('pStock').value) || 0
             };
-            if(!data.title) return alert('Title missing!');
-            if(id) db.ref('products/'+id).update(data); else db.ref('products').push(data);
-            resetPForm(); alert('Success!');
+
+            if(!data.title) return alert('প্রোডাক্ট এর নাম দিন!');
+
+            if(id) {
+                // আপডেট লজিক
+                db.ref('products/'+id).update(data)
+                .then(() => { alert('প্রোডাক্ট আপডেট হয়েছে!'); resetPForm(); })
+                .catch(e => alert('Error: ' + e.message));
+            } else {
+                // নতুন প্রোডাক্ট সেভ
+                db.ref('products').push(data)
+                .then(() => { alert('প্রোডাক্ট সেভ হয়েছে!'); resetPForm(); })
+                .catch(e => alert('Error: ' + e.message));
+            }
         }
 
-        function resetPForm() {
-            document.getElementById('pid').value = '';
-            document.getElementById('pTitle').value = '';
-            document.getElementById('pImg').value = '';
-            document.getElementById('pCost').value = '';
-            document.getElementById('pPdf').value = '';
-            document.getElementById('pPrint').value = '';
-            document.getElementById('pStock').value = '';
-        }
-
+        // এডিট করার জন্য ডাটা লোড করা
         function editProduct(id) {
             db.ref('products/'+id).once('value', snap => {
                 const p = snap.val();
                 document.getElementById('pid').value = id;
-                document.getElementById('pTitle').value = p.title;
-                document.getElementById('pImg').value = p.img;
-                document.getElementById('pCost').value = p.cost;
-                document.getElementById('pPdf').value = p.pdfPrice;
-                document.getElementById('pPrint').value = p.printPrice;
-                document.getElementById('pStock').value = p.stock;
+                document.getElementById('pTitle').value = p.title || '';
+                document.getElementById('pImg').value = p.img || '';
+                document.getElementById('pDesc').value = p.desc || ''; // ডেসক্রিপশন ডাটা লোড
+                document.getElementById('pCost').value = p.cost || '';
+                document.getElementById('pPdf').value = p.pdfPrice || '';
+                document.getElementById('pPrint').value = p.printPrice || '';
+                document.getElementById('pStock').value = p.stock || '';
+                
+                // UI পরিবর্তন
+                document.getElementById('saveBtn').innerText = "আপডেট কনফার্ম করুন";
+                document.getElementById('cancelBtn').classList.remove('hidden');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
             });
+        }
+
+        // ফরম ক্লিয়ার করা
+        function resetPForm() {
+            document.getElementById('pid').value = '';
+            document.getElementById('pTitle').value = '';
+            document.getElementById('pImg').value = '';
+            document.getElementById('pDesc').value = ''; // ডেসক্রিপশন ক্লিয়ার
+            document.getElementById('pCost').value = '';
+            document.getElementById('pPdf').value = '';
+            document.getElementById('pPrint').value = '';
+            document.getElementById('pStock').value = '';
+            
+            document.getElementById('saveBtn').innerText = "সেভ / আপডেট করুন";
+            document.getElementById('cancelBtn').classList.add('hidden');
         }
 
         function loadReports() {
