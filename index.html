@@ -19,11 +19,35 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap');
         body { font-family: 'Hind Siliguri', sans-serif; background: #050505; color: #e2e8f0; overflow-x: hidden; scroll-behavior: smooth; }
+        
+        /* Preloader */
+        #preloader { position: fixed; inset: 0; background: #050505; z-index: 99999; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .loader-ring { width: 45px; height: 45px; border: 3px solid #1a1a1a; border-radius: 50%; border-top-color: #f97316; animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
         .glass { background: rgba(20, 20, 20, 0.85); backdrop-filter: blur(25px); border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
         .gradient-text { background: linear-gradient(90deg, #f59e0b, #f97316); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .btn-gradient { background: linear-gradient(135deg, #f97316 0%, #ea580c 100%); transition: 0.4s; }
-        .service-card { background: #121212; border: 1px solid #27272a; border-radius: 24px; transition: 0.4s; overflow: hidden; }
+        
+        .service-card { background: #121212; border: 1px solid #27272a; border-radius: 24px; transition: 0.4s; overflow: hidden; position: relative; }
         .service-card:hover { border-color: #f97316; transform: translateY(-10px); box-shadow: 0 25px 50px -12px rgba(249, 115, 22, 0.3); }
+        
+        /* Share Button */
+        .share-btn { position: absolute; top: 15px; right: 15px; background: rgba(0,0,0,0.7); color: white; width: 35px; height: 35px; border-radius: 12px; display: flex; items-center; justify-content: center; cursor: pointer; z-index: 10; border: 1px solid rgba(255,255,255,0.1); transition: 0.3s; }
+        .share-btn:hover { background: #f97316; transform: scale(1.1); }
+
+        /* Delivery Proof Slider */
+        .slider-container { width: 100%; overflow: hidden; background: #080808; padding: 30px 0; border-top: 1px solid #111; border-bottom: 1px solid #111; }
+        .slide-track { display: flex; width: calc(280px * 20); animation: scroll 40s linear infinite; }
+        .slide-track:hover { animation-play-state: paused; }
+        .slide-item { width: 260px; height: 380px; margin: 0 10px; flex-shrink: 0; border-radius: 20px; overflow: hidden; border: 1px solid #222; }
+        .slide-item img { width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
+
+        @keyframes scroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(calc(-280px * 10)); }
+        }
+
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 2000; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(10px); }
         .modal-content { background: #0f0f0f; border: 1px solid #333; padding: 30px; border-radius: 30px; width: 100%; max-width: 450px; position: relative; }
         #campaign-bar { display: none; background: linear-gradient(to right, #f97316, #ea580c); color: white; text-align: center; padding: 8px; font-size: 12px; font-weight: bold; position: fixed; top: 0; width: 100%; z-index: 10000; }
@@ -32,6 +56,12 @@
     </style>
 </head>
 <body>
+
+    <!-- Preloader -->
+    <div id="preloader">
+        <div class="loader-ring mb-4"></div>
+        <p class="text-[10px] uppercase tracking-[3px] text-orange-500 font-bold">Loading Experience...</p>
+    </div>
 
     <div id="campaign-bar"></div>
 
@@ -53,6 +83,7 @@
         </div>
         <div class="hidden md:flex gap-6 text-xs font-bold uppercase tracking-widest text-gray-400">
             <a href="#" class="hover:text-orange-500 transition">Home</a>
+            <a href="#deliveries" class="hover:text-orange-500 transition">Proofs</a>
             <a href="#services" class="hover:text-orange-500 transition">Services</a>
             <a href="#tracking" class="hover:text-orange-500 transition">Track Order</a>
         </div>
@@ -72,13 +103,20 @@
         </div>
     </header>
 
-    <!-- Stats Section -->
-    <div class="max-w-7xl mx-auto px-4 py-10 grid grid-cols-2 md:grid-cols-4 gap-4" data-aos="fade-up">
-        <div class="bg-zinc-900/50 p-6 rounded-[24px] border border-white/5 text-center"><h3 class="text-2xl font-bold text-orange-500">৫০০+</h3><p class="text-[10px] text-gray-500 uppercase font-bold mt-1">সফল অর্ডার</p></div>
-        <div class="bg-zinc-900/50 p-6 rounded-[24px] border border-white/5 text-center"><h3 class="text-2xl font-bold text-orange-500">১০০০+</h3><p class="text-[10px] text-gray-500 uppercase font-bold mt-1">হ্যাপি ক্লায়েন্ট</p></div>
-        <div class="bg-zinc-900/50 p-6 rounded-[24px] border border-white/5 text-center"><h3 class="text-2xl font-bold text-orange-500">২৪/৭</h3><p class="text-[10px] text-gray-500 uppercase font-bold mt-1">সাপোর্ট সুবিধা</p></div>
-        <div class="bg-zinc-900/50 p-6 rounded-[24px] border border-white/5 text-center"><h3 class="text-2xl font-bold text-orange-500">১০০%</h3><p class="text-[10px] text-gray-500 uppercase font-bold mt-1">গোপনীয়তা</p></div>
-    </div>
+    <!-- Delivery Proof Slider -->
+    <section id="deliveries" class="py-10 bg-zinc-950/50">
+        <div class="text-center mb-8">
+            <h3 class="text-2xl font-black italic text-white uppercase tracking-wider">আমাদের <span class="text-orange-500">সফল ডেলিভারি</span></h3>
+            <p class="text-[10px] text-zinc-500 uppercase tracking-[3px] mt-2">বিকাশ/নগদ পেমেন্ট ও ডেলিভারি স্ক্রিনশট</p>
+        </div>
+        
+        <div class="slider-container">
+            <div class="slide-track" id="delivery-slides">
+                <!-- Data will load from Firebase -->
+                <div class="text-center w-full text-zinc-800 uppercase text-xs tracking-widest">Loading delivery proofs...</div>
+            </div>
+        </div>
+    </section>
 
     <!-- Tracking Section -->
     <section id="tracking" class="max-w-4xl mx-auto px-4 mt-20" data-aos="fade-up">
@@ -97,7 +135,7 @@
         </div>
     </main>
 
-    <!-- Footer -->
+    <!-- Footer (Restored All Social Links) -->
     <footer class="bg-zinc-950 pt-24 pb-10 border-t border-white/5">
         <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-16">
             <div class="space-y-8">
@@ -144,7 +182,7 @@
 
     <!-- Order Modal -->
     <div id="orderModal" class="modal">
-        <div class="modal-content" data-aos="zoom-in">
+        <div class="modal-content">
             <h3 id="modalTitle" class="text-xl font-black text-white mb-6 text-center italic">Confirm Order</h3>
             <div class="bg-orange-600/10 border border-orange-600/20 p-6 rounded-2xl mb-8 text-center">
                 <p class="text-[9px] text-orange-500 uppercase font-black mb-1 tracking-widest">বিকাশ/নগদ (Personal)</p>
@@ -168,6 +206,8 @@
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
         AOS.init({ duration: 1000 });
+        
+        // Firebase Config
         const firebaseConfig = {
             apiKey: "AIzaSyAixef88AV6RvG0OJmAsm-Us1J3iaUwJIk",
             authDomain: "designworkbd94-76817.firebaseapp.com",
@@ -181,6 +221,15 @@
         const db = firebase.database();
 
         let selP = null, selType = 'PDF', payN = '', pixelId = '';
+        let allProducts = [];
+
+        // Preloader Closer
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('preloader').style.opacity = '0';
+                setTimeout(() => { document.getElementById('preloader').style.display = 'none'; }, 500);
+            }, 1200);
+        });
 
         // Auto Text Slider
         const texts = ["ডিজিটাল রূপ", "সেরা ফিনিশিং", "অরজিনাল লুক", "প্রিমিয়াম ডিজাইন"];
@@ -190,10 +239,10 @@
             if(el) { el.style.opacity = 0; setTimeout(() => { el.innerText = texts[count % texts.length]; el.style.opacity = 1; count++; }, 500); }
         }, 3000);
 
-        // Load Settings (Pixel, Campaign, Payment)
+        // Load Settings
         db.ref('settings').on('value', snap => {
             const s = snap.val() || {};
-            payN = s.paymentNum || "লোড হচ্ছে...";
+            payN = s.paymentNum || "01948-929321";
             document.getElementById('displayPayNum').innerText = payN;
             if(s.pixelId) { pixelId = s.pixelId; initPixel(pixelId); }
             if(s.campActive) { document.getElementById('campaign-bar').style.display = 'block'; document.getElementById('campaign-bar').innerText = s.campText; }
@@ -209,35 +258,75 @@
             db.ref('capi_logs').push({ event: ev, data: data, time: Date.now() });
         }
 
-        // Abandoned Cart
-        let cartSaved = false;
-        document.getElementById('custPhone').addEventListener('blur', function() {
-            const n = document.getElementById('custName').value;
-            const p = this.value;
-            if(p.length >= 11 && !cartSaved) {
-                db.ref('abandoned_cart').push({ name: n, phone: p, product: selP?.title, time: Date.now() });
-                cartSaved = true;
+        // Load Delivery Proofs
+        db.ref('deliveries').on('value', snap => {
+            const track = document.getElementById('delivery-slides');
+            const data = snap.val();
+            if(!data) {
+                track.innerHTML = '<p class="text-center w-full text-zinc-600">No delivery proofs available.</p>';
+                return;
             }
+            const images = Object.values(data);
+            track.innerHTML = '';
+            // Triple the images for smooth infinite scroll
+            [...images, ...images, ...images].forEach(imgUrl => {
+                track.innerHTML += `<div class="slide-item"><img src="${imgUrl}" loading="lazy"></div>`;
+            });
         });
 
-        // Load Products
+        // Load Products & Share Feature
         db.ref('products').on('value', snap => {
-            const grid = document.getElementById('services-grid'); grid.innerHTML = '';
+            const grid = document.getElementById('services-grid'); 
+            grid.innerHTML = '';
             const data = snap.val();
             if(!data) { grid.innerHTML = '<p class="col-span-full text-center text-gray-500">কোন প্রোডাক্ট পাওয়া যায়নি।</p>'; return; }
-            Object.values(data).reverse().forEach(p => {
+            
+            allProducts = Object.values(data);
+            allProducts.reverse().forEach((p, index) => {
+                const productData = JSON.stringify(p).replace(/'/g, "&apos;");
                 grid.innerHTML += `
                 <div class="service-card" data-aos="fade-up">
+                    <div class="share-btn" onclick='shareProduct("${p.title}")' title="Share this service">
+                        <i class="fas fa-share-nodes"></i>
+                    </div>
                     <img src="${p.img}" class="w-full h-56 object-cover">
                     <div class="p-6">
                         <h4 class="font-bold text-white mb-2 text-lg">${p.title}</h4>
                         <p class="text-[11px] text-gray-500 mb-6 line-clamp-2">${p.desc || 'সেরা কোয়ালিটির ডিজাইন ও প্রিন্টিং সল্যুশন।'}</p>
-                        <button onclick='openOrder(${JSON.stringify(p)})' class="btn-gradient w-full py-4 rounded-2xl text-[10px] font-bold uppercase tracking-widest text-white shadow-md">অর্ডার করুন</button>
+                        <button onclick='openOrder(${productData})' class="btn-gradient w-full py-4 rounded-2xl text-[10px] font-bold uppercase tracking-widest text-white shadow-md">অর্ডার করুন</button>
                     </div>
                 </div>`;
             });
+            checkDeepLink();
         });
 
+        // Share Function
+        function shareProduct(title) {
+            const siteUrl = window.location.origin + window.location.pathname;
+            const shareUrl = `${siteUrl}?service=${encodeURIComponent(title)}`;
+            
+            if (navigator.share) {
+                navigator.share({ title: 'Design Solution BD', text: `আমাদের ${title} সার্ভিসটি দেখুন।`, url: shareUrl });
+            } else {
+                navigator.clipboard.writeText(shareUrl);
+                alert('লিঙ্ক কপি হয়েছে! সোশ্যাল মিডিয়ায় শেয়ার করুন।');
+            }
+        }
+
+        function checkDeepLink() {
+            const name = new URLSearchParams(window.location.search).get('service');
+            if (name) {
+                const p = allProducts.find(i => i.title === name);
+                if (p) { 
+                    setTimeout(() => { 
+                        openOrder(p); 
+                        document.getElementById('services').scrollIntoView({behavior: 'smooth'}); 
+                    }, 1000); 
+                }
+            }
+        }
+
+        // Standard Order Functions
         function openOrder(p) {
             selP = p;
             document.getElementById('modalTitle').innerText = p.title;
@@ -247,7 +336,12 @@
             trackCAPI('InitiateCheckout', { content_name: p.title });
         }
 
-        function setOrderType(t) { selType = t; document.getElementById('btnPdf').style.borderColor = t === 'PDF' ? '#f97316' : '#27272a'; document.getElementById('btnPrint').style.borderColor = t === 'Hard Copy' ? '#f97316' : '#27272a'; }
+        function setOrderType(t) { 
+            selType = t; 
+            document.getElementById('btnPdf').style.borderColor = t === 'PDF' ? '#f97316' : '#27272a'; 
+            document.getElementById('btnPrint').style.borderColor = t === 'Hard Copy' ? '#f97316' : '#27272a'; 
+        }
+
         function closeModal() { document.getElementById('orderModal').style.display = 'none'; }
 
         function confirmOrder() {
@@ -260,10 +354,10 @@
                 const price = selType === 'PDF' ? selP.pdfPrice : selP.printPrice;
                 db.ref('orders').push({
                     productTitle: selP.title, customerName: name, customerPhone: phone,
-                    orderType: selType, price: price, cost: selP.cost || 0, status: 'Pending', timestamp: Date.now()
+                    orderType: selType, price: price, status: 'Pending', timestamp: Date.now()
                 }).then(() => {
                     trackCAPI('Purchase', { value: price, currency: 'BDT', content_name: selP.title });
-                    const waText = `নতুন অর্ডার (DSBD):%0A----------------------%0Aপ্রোডাক্ট: ${selP.title}%0Aটাইপ: ${selType}%0Aনাম: ${name}%0Aফোন: ${phone}%0Aপেমেন্ট নম্বর: ${payN}`;
+                    const waText = `নতুন অর্ডার (DSBD):%0Aপ্রোডাক্ট: ${selP.title}%0Aটাইপ: ${selType}%0Aনাম: ${name}%0Aফোন: ${phone}`;
                     window.location.href = `https://wa.me/8801948929321?text=${waText}`;
                 });
             });
