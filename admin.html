@@ -38,59 +38,33 @@
                 <h2 class="text-orange-500 font-bold italic uppercase tracking-wider">DSBD Master</h2>
             </div>
             <nav class="space-y-1">
-                <p class="text-[10px] uppercase text-gray-500 font-bold ml-2 mb-2">Main Menu</p>
                 <button onclick="switchTab('orders')" class="btn-side active" id="btn-orders"><i class="fas fa-shopping-cart mr-2"></i> অর্ডার ম্যানেজমেন্ট</button>
-                <button onclick="switchTab('deliveries')" class="btn-side" id="btn-deliveries"><i class="fas fa-images mr-2"></i> ডেলিভারি প্রুফ (Slider)</button>
+                <button onclick="switchTab('deliveries')" class="btn-side" id="btn-deliveries"><i class="fas fa-images mr-2"></i> ডেলিভারি প্রুফ</button>
                 <button onclick="switchTab('inventory')" class="btn-side" id="btn-inventory"><i class="fas fa-box-open mr-2"></i> প্রোডাক্ট ও ক্যাটাগরি</button>
-                <button onclick="switchTab('branding')" class="btn-side" id="btn-branding"><i class="fas fa-paint-brush mr-2"></i> ব্র্যান্ডিং ও এসইও</button>
-                <button onclick="switchTab('marketing')" class="btn-side" id="btn-marketing"><i class="fas fa-bullhorn mr-2"></i> মার্কেটিং টুলস</button>
-                <button onclick="switchTab('reports')" class="btn-side" id="btn-reports"><i class="fas fa-chart-pie mr-2"></i> ইনকাম ও অ্যানালিটিক্স</button>
-                <button onclick="switchTab('customers')" class="btn-side" id="btn-customers"><i class="fas fa-users-cog mr-2"></i> কাস্টমার ডাটাবেজ</button>
-                <button onclick="switchTab('settings')" class="btn-side" id="btn-settings"><i class="fas fa-key mr-2"></i> গেটওয়ে সেটিংস</button>
-                <button onclick="location.reload()" class="btn-side mt-10 text-red-400 border border-red-400/10 hover:bg-red-600"><i class="fas fa-power-off mr-2"></i> লগআউট</button>
+                <button onclick="location.reload()" class="btn-side mt-10 text-red-400"><i class="fas fa-power-off mr-2"></i> লগআউট</button>
             </nav>
         </div>
 
-        <!-- Main Content -->
-        <div class="flex-1 p-6 md:p-10 overflow-y-auto bg-[#020617]">
+        <div class="flex-1 p-6 md:p-10 overflow-y-auto">
             
             <!-- Orders Tab -->
             <div id="tab-orders" class="tab active">
                 <div class="flex justify-between items-center mb-6">
                     <h3 class="text-xl font-bold">অর্ডারসমূহ</h3>
-                    <input type="text" id="orderSearch" placeholder="নাম/ফোন দিয়ে খুঁজুন..." class="bg-[#0f172a] border border-white/10 px-4 py-2 rounded-xl text-xs outline-none focus:border-orange-500" onkeyup="filterOrders()">
+                    <input type="text" id="orderSearch" placeholder="নাম/ফোন দিয়ে খুঁজুন..." class="bg-[#0f172a] border border-white/10 px-4 py-2 rounded-xl text-xs outline-none" onkeyup="filterOrders()">
                 </div>
                 <div id="order-list" class="space-y-4"></div>
-            </div>
-
-            <!-- Deliveries/Slider Tab (NEW) -->
-            <div id="tab-deliveries" class="tab">
-                <h3 class="text-xl font-bold mb-6 italic">ডেলিভারি প্রুফ ম্যানেজমেন্ট</h3>
-                <div class="card mb-8">
-                    <h4 class="text-orange-500 font-bold mb-4 text-xs uppercase">নতুন স্ক্রিনশট যোগ করুন</h4>
-                    <div class="flex flex-col md:flex-row gap-4">
-                        <input type="text" id="deliveryImgUrl" placeholder="ইমেজ লিঙ্ক (URL) এখানে দিন..." class="input-box">
-                        <button onclick="addDeliveryPhoto()" class="bg-orange-600 px-8 py-3 rounded-xl font-bold hover:bg-orange-700 transition whitespace-nowrap">অ্যাড করুন</button>
-                    </div>
-                    <p class="text-[10px] text-gray-500 mt-2 italic">* এটি সরাসরি আপনার index.html এর স্লাইডারে যোগ হবে।</p>
-                </div>
-
-                <h4 class="text-white font-bold mb-4 text-xs uppercase tracking-widest">বর্তমান স্লাইডার ইমেজসমূহ</h4>
-                <div id="delivery-admin-list" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
-                    <!-- Images will load here -->
-                </div>
             </div>
 
             <!-- Inventory Tab -->
             <div id="tab-inventory" class="tab">
                 <div class="flex justify-between items-center mb-6">
-                    <h3 class="text-xl font-bold italic">প্রোডাক্ট ও ক্যাটাগরি</h3>
+                    <h3 class="text-xl font-bold">প্রোডাক্ট ও ক্যাটাগরি</h3>
                     <div class="flex gap-2">
                         <input type="text" id="newCat" placeholder="নতুন ক্যাটাগরি..." class="bg-[#0f172a] border border-white/10 px-4 py-2 rounded-xl text-xs outline-none">
-                        <button onclick="addCategory()" class="bg-blue-600 px-4 py-2 rounded-xl text-xs font-bold uppercase">+</button>
+                        <button onclick="addCategory()" class="bg-blue-600 px-4 py-2 rounded-xl text-xs">+</button>
                     </div>
                 </div>
-                <!-- (Keep your existing inventory card and list here) -->
                 <div class="card mb-8">
                     <input type="hidden" id="pid">
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
@@ -100,26 +74,32 @@
                             <option value="General">General</option>
                         </select>
                     </div>
-                    <textarea id="pDesc" placeholder="প্রোডাক্ট শর্ট ডেসক্রিপশন" class="input-box h-20"></textarea>
+                    <textarea id="pDesc" placeholder="ডেসক্রিপশন" class="input-box h-20"></textarea>
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
                         <input type="number" id="pCost" placeholder="কেনা দাম" class="input-box">
                         <input type="number" id="pPdf" placeholder="PDF মূল্য" class="input-box">
                         <input type="number" id="pPrint" placeholder="Hard Copy মূল্য" class="input-box">
-                        <input type="number" id="pStock" placeholder="স্টক সংখ্যা" class="input-box">
+                        <input type="number" id="pStock" placeholder="স্টক" class="input-box">
                     </div>
-                    <button onclick="saveProduct()" id="saveBtn" class="w-full bg-orange-600 py-3 rounded-xl font-bold uppercase">প্রোডাক্ট সেভ / আপডেট</button>
+                    <button onclick="saveProduct()" id="saveBtn" class="w-full bg-orange-600 py-3 rounded-xl font-bold">সেভ / আপডেট করুন</button>
                 </div>
                 <div id="inventory-list" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
             </div>
 
-            <!-- (Branding, Marketing, Reports, Customers, Settings Tabs are same as your previous code) -->
-            <!-- ... (Keeping existing tab structure for branding, marketing etc.) ... -->
+            <!-- Deliveries Tab -->
+            <div id="tab-deliveries" class="tab">
+                <h3 class="text-xl font-bold mb-6">ডেলিভারি প্রুফ</h3>
+                <div class="card mb-8 flex gap-4">
+                    <input type="text" id="deliveryImgUrl" placeholder="ইমেজ লিঙ্ক..." class="input-box mb-0">
+                    <button onclick="addDeliveryPhoto()" class="bg-orange-600 px-6 rounded-xl font-bold">অ্যাড</button>
+                </div>
+                <div id="delivery-admin-list" class="grid grid-cols-2 md:grid-cols-5 gap-4"></div>
+            </div>
 
         </div>
     </div>
 
     <script>
-        // Firebase Config (Same as yours)
         const firebaseConfig = {
             apiKey: "AIzaSyAixef88AV6RvG0OJmAsm-Us1J3iaUwJIk",
             authDomain: "designworkbd94-76817.firebaseapp.com",
@@ -144,82 +124,126 @@
         }
 
         function init() {
-            // Load Orders
+            loadOrders();
+            loadProducts();
+            loadCategories();
+        }
+
+        // --- অর্ডার হ্যান্ডলিং ---
+        function loadOrders() {
             db.ref('orders').on('value', snap => {
                 const list = document.getElementById('order-list'); list.innerHTML = '';
                 snap.forEach(c => {
                     const o = c.val(); const id = c.key;
-                    list.innerHTML += `<div class="bg-[#0f172a] p-5 rounded-2xl flex justify-between border-l-4 border-orange-500 mb-4">
+                    list.innerHTML += `<div class="bg-[#0f172a] p-4 rounded-xl flex justify-between border-l-4 border-orange-500 order-item" data-search="${o.customerName} ${o.customerPhone}">
                         <div><h4 class="font-bold text-orange-400">${o.productTitle}</h4><p class="text-xs">${o.customerName} (${o.customerPhone})</p></div>
                         <button onclick="if(confirm('Delete?')) db.ref('orders/${id}').remove()" class="text-red-500"><i class="fas fa-trash"></i></button>
                     </div>`;
                 });
             });
+        }
 
-            // Load Inventory/Products
+        function filterOrders() {
+            let q = document.getElementById('orderSearch').value.toLowerCase();
+            document.querySelectorAll('.order-item').forEach(item => {
+                item.style.display = item.getAttribute('data-search').toLowerCase().includes(q) ? 'flex' : 'none';
+            });
+        }
+
+        // --- প্রোডাক্ট হ্যান্ডলিং (Edit/Delete Fixed) ---
+        function loadProducts() {
             db.ref('products').on('value', snap => {
                 const list = document.getElementById('inventory-list'); list.innerHTML = '';
                 snap.forEach(c => {
-                    const p = c.val();
+                    const p = c.val(); const id = c.key;
                     list.innerHTML += `<div class="bg-[#0f172a] p-4 rounded-xl flex items-center gap-4 border border-white/5">
-                        <img src="${p.img}" class="w-10 h-10 rounded-lg">
-                        <p class="flex-1 text-xs">${p.title}</p>
-                        <button onclick="editProduct('${c.key}')" class="text-blue-400"><i class="fas fa-edit"></i></button>
-                    </div>`;
-                });
-            });
-            
-            // Load Settings & Logo
-            db.ref('branding').on('value', snap => {
-                if(snap.exists() && snap.val().logo) document.getElementById('admin-logo-preview').src = snap.val().logo;
-            });
-        }
-
-        // --- DELIVERY PROOF FUNCTIONS (NEW) ---
-        function addDeliveryPhoto() {
-            const url = document.getElementById('deliveryImgUrl').value;
-            if(!url) return alert('লিঙ্ক দিন!');
-            db.ref('deliveries').push(url).then(() => {
-                document.getElementById('deliveryImgUrl').value = '';
-                alert('সফলভাবে যুক্ত হয়েছে!');
-            });
-        }
-
-        function loadDeliveriesAdmin() {
-            db.ref('deliveries').on('value', snap => {
-                const list = document.getElementById('delivery-admin-list');
-                list.innerHTML = '';
-                if(!snap.exists()) { list.innerHTML = '<p class="text-gray-500 text-xs">কোন ছবি নেই।</p>'; return; }
-                
-                snap.forEach(child => {
-                    const id = child.key;
-                    const url = child.val();
-                    list.innerHTML += `
-                    <div class="relative group rounded-xl overflow-hidden border border-white/10 bg-white/5">
-                        <img src="${url}" class="w-full h-40 object-cover">
-                        <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
-                            <button onclick="deleteDelivery('${id}')" class="bg-red-600 text-white p-2 rounded-lg text-xs font-bold"><i class="fas fa-trash"></i> মুছে ফেলুন</button>
+                        <img src="${p.img}" class="w-10 h-10 rounded shadow-lg">
+                        <div class="flex-1"><p class="text-xs font-bold">${p.title}</p></div>
+                        <div class="flex gap-3">
+                            <button onclick="editProduct('${id}')" class="text-blue-400"><i class="fas fa-edit"></i></button>
+                            <button onclick="deleteProduct('${id}')" class="text-red-500"><i class="fas fa-trash"></i></button>
                         </div>
                     </div>`;
                 });
             });
         }
 
-        function deleteDelivery(id) {
-            if(confirm('এই ছবিটি স্লাইডার থেকে মুছে ফেলতে চান?')) {
-                db.ref('deliveries/' + id).remove();
-            }
-        }
-
-        // (Other helper functions for inventory, branding remain same)
         function saveProduct() {
+            const id = document.getElementById('pid').value;
             const data = {
                 title: document.getElementById('pTitle').value,
                 img: document.getElementById('pImg').value,
+                cat: document.getElementById('pCat').value,
+                desc: document.getElementById('pDesc').value,
+                cost: document.getElementById('pCost').value,
                 pdfPrice: document.getElementById('pPdf').value,
-                printPrice: document.getElementById('pPrint').value
+                printPrice: document.getElementById('pPrint').value,
+                stock: document.getElementById('pStock').value
             };
-            db.ref('products').push(data).then(() => alert('Product Saved'));
+            if(!data.title || !data.img) return alert("পুরো ফর্ম পূরণ করুন");
+
+            if(id) {
+                db.ref('products/' + id).update(data).then(() => { alert("Updated!"); resetForm(); });
+            } else {
+                db.ref('products').push(data).then(() => { alert("Saved!"); resetForm(); });
+            }
+        }
+
+        function editProduct(id) {
+            db.ref('products/' + id).once('value', snap => {
+                const p = snap.val();
+                document.getElementById('pid').value = id;
+                document.getElementById('pTitle').value = p.title;
+                document.getElementById('pImg').value = p.img;
+                document.getElementById('pCat').value = p.cat || 'General';
+                document.getElementById('pDesc').value = p.desc || '';
+                document.getElementById('pCost').value = p.cost || '';
+                document.getElementById('pPdf').value = p.pdfPrice || '';
+                document.getElementById('pPrint').value = p.printPrice || '';
+                document.getElementById('pStock').value = p.stock || '';
+                document.getElementById('saveBtn').innerText = "আপডেট করুন";
+                window.scrollTo(0,0);
+            });
+        }
+
+        function deleteProduct(id) { if(confirm('Delete Product?')) db.ref('products/' + id).remove(); }
+
+        function resetForm() {
+            document.getElementById('pid').value = '';
+            document.querySelectorAll('.input-box').forEach(i => i.value = '');
+            document.getElementById('saveBtn').innerText = "সেভ / আপডেট করুন";
+        }
+
+        // --- ক্যাটাগরি হ্যান্ডলিং ---
+        function addCategory() {
+            const name = document.getElementById('newCat').value;
+            if(name) db.ref('categories').push(name).then(() => document.getElementById('newCat').value = '');
+        }
+
+        function loadCategories() {
+            db.ref('categories').on('value', snap => {
+                const sel = document.getElementById('pCat');
+                sel.innerHTML = '<option value="General">General</option>';
+                snap.forEach(c => {
+                    sel.innerHTML += `<option value="${c.val()}">${c.val()}</option>`;
+                });
+            });
+        }
+
+        // --- ডেলিভারি প্রুফ ---
+        function addDeliveryPhoto() {
+            const url = document.getElementById('deliveryImgUrl').value;
+            if(url) db.ref('deliveries').push(url).then(() => document.getElementById('deliveryImgUrl').value = '');
+        }
+
+        function loadDeliveriesAdmin() {
+            db.ref('deliveries').on('value', snap => {
+                const list = document.getElementById('delivery-admin-list'); list.innerHTML = '';
+                snap.forEach(c => {
+                    list.innerHTML += `<div class="relative group"><img src="${c.val()}" class="w-full h-24 object-cover rounded-lg border border-white/10">
+                    <button onclick="db.ref('deliveries/${c.key}').remove()" class="absolute inset-0 bg-red-600/80 text-white opacity-0 group-hover:opacity-100 rounded-lg text-xs">Delete</button></div>`;
+                });
+            });
         }
     </script>
 </body>
